@@ -12,7 +12,9 @@
 
 (defn see--list
   [options file]
-  (if (flag-set :list options) (.list file) (reduce #(str %1 "\t" %2) (.list file))))
+  (let [nl-cond #(<= 6 (:col %1))]
+    (:lst (reduce #(do {:col (if (nl-cond %1) 1 (+ (:col %1) 1))
+                        :lst (str (:lst %1) (if (nl-cond %1) "\n" "\t") %2)}) {:col 0 :lst ""} (.list file)))))
 
 (defn see--cat
   [options file]
